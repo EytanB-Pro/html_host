@@ -50,7 +50,8 @@
       margin-bottom: 24px;
     }
 
-    input[type="text"] {
+    input[type="text"],
+    input[type="password"] {
       width: 100%;
       padding: 14px 16px;
       border: 1px solid #d1d5db;
@@ -103,15 +104,16 @@
 </head>
 <body>
   <main class="panel">
-    <h1>Testing version control</h1>
-    <p>Enter a name and click the button to see a quick interactive preview of a static UI deployed on Vercel.</p>
+    <h1>Flask User Creator</h1>
+    <p>Fill in a name and password, then submit to post to the Flask `/users` endpoint.</p>
 
-    <form id="greeting-form" class="form-row">
-      <input id="name-input" type="text" placeholder="Type your name here" autocomplete="off" />
-      <button type="submit">Say Hello</button>
+    <form id="user-form" class="form-row">
+      <input id="name-input" type="text" placeholder="Type your name" autocomplete="off" required />
+      <input id="password-input" type="password" placeholder="Type your password" autocomplete="off" required />
+      <button type="submit">Create User</button>
     </form>
 
-    <div id="result">Your message will appear here.</div>
+    <div id="result">Submit the form to create a user through Flask.</div>
 
     <div class="cards">
       <div class="card">
@@ -120,26 +122,50 @@
       </div>
       <div class="card">
         <strong>How to use it</strong>
-        <p>Deploy this folder to Vercel, then open the site and try the greeting form.</p>
+        <p>Run the Flask app locally, then open this page and submit the form to create a user.</p>
       </div>
       <div class="card">
-        <strong>Deployment</strong>
-        <p>No build step required. Vercel will serve this as a static site when it detects an index.html file.</p>
+        <strong>Backend</strong>
+        <p>This page sends JSON to `/users` and receives status messages from Flask.</p>
       </div>
     </div>
   </main>
 
   <script>
-    const form = document.getElementById('greeting-form');
-    const input = document.getElementById('name-input');
+    const form = document.getElementById('user-form');
+    const nameInput = document.getElementById('name-input');
+    const passwordInput = document.getElementById('password-input');
     const result = document.getElementById('result');
 
-    form.addEventListener('submit', (event) => {
+    form.addEventListener('submit', async (event) => {
       event.preventDefault();
-      const name = input.value.trim();
-      result.textContent = name
-        ? `Hello, ${name}! Your Vercel preview is ready.`
-        : 'Please enter a name to get started.';
+      const name = nameInput.value.trim();
+      const password = passwordInput.value.trim();
+
+      if (!name || !password) {
+        result.textContent = 'Both name and password are required.';
+        return;
+      }
+
+      try {
+        const response = await fetch('/users', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ name, password }),
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          result.textContent = data.error || 'Failed to create user.';
+        } else {
+          result.textContent = data.message;
+          form.reset();
+        }
+      } catch (error) {
+        result.textContent = 'Unable to connect to the backend.';
+      }
     });
   </script>
 </body>
