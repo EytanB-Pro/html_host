@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from rdb.config import DevConfig
 from rdb.model import db, User
 
@@ -8,6 +8,10 @@ db.init_app(app)
 
 with app.app_context():
     db.create_all()
+
+@app.route('/')
+def serve_index():
+    return send_from_directory('.', 'index.html')
 
 @app.route('/users', methods=['POST'])
 def create_user():
