@@ -13,7 +13,7 @@ with app.app_context():
 def serve_index():
     return send_from_directory('.', 'index.html')
 
-@app.route('/users', methods=['POST'])
+@app.route('api/users', methods=['POST'])
 def create_user():
     if request.is_json:
         data = request.get_json()
