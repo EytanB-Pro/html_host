@@ -104,8 +104,8 @@
 </head>
 <body>
   <main class="panel">
-    <h1>Flask User Creator</h1>
-    <p>Fill in a name and password, then submit to post to the Flask `/users` endpoint.</p>
+    <h1>Vercel Serverless User Creator</h1>
+    <p>Fill in a name and password, then submit to post to the serverless `/api/users` endpoint.</p>
 
     <form id="user-form" class="form-row">
       <input id="name-input" type="text" placeholder="Type your name" autocomplete="off" required />
@@ -126,7 +126,7 @@
       </div>
       <div class="card">
         <strong>Backend</strong>
-        <p>This page sends JSON to `/users` and receives status messages from Flask.</p>
+        <p>This page sends JSON to `/api/users` and receives status messages from the Vercel serverless function.</p>
       </div>
     </div>
   </main>
@@ -148,7 +148,7 @@
       }
 
       try {
-        const response = await fetch('/users', {
+const response = await fetch('/api/users', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
